@@ -6,6 +6,18 @@ import numpy as np
 
 source_folder = sys.argv[5]
 
+
+def set_adaptive_subsurf(obj):
+    subsurf = obj.modifiers.new("Subdivision", 'SUBSURF')
+    subsurf.subdivision_type = 'SIMPLE'
+    subsurf.levels = 2 
+    subsurf.render_levels = 2
+
+    # Other settings to mess with
+    # subsurf.max_level = 4 
+    # subsurf.quality = 3
+    # subsurf.boundary_smooth = 'PRESERVE_CORNERS'
+
 for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
     if os.path.isdir(folder_path):
@@ -72,6 +84,8 @@ for folder_name in os.listdir(source_folder):
         plane = bpy.context.object
         plane.data.materials.append(material)
         plane.modifiers.new("Subdivision", 'SUBSURF')
+
+        set_adaptive_subsurf(plane)
 
         bpy.ops.object.camera_add(location=(0, 0, 1))
         camera = bpy.context.object
