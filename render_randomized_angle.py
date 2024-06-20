@@ -51,6 +51,7 @@ for folder_name in os.listdir(source_folder):
         for tex_type, suffix in texture_types.items():
             filename = folder_name + suffix
             image_path = os.path.join(folder_path, filename)
+            
             if os.path.exists(image_path):
                 tex_image = nodes.new('ShaderNodeTexImage')
                 tex_image.image = bpy.data.images.load(image_path)
@@ -58,6 +59,7 @@ for folder_name in os.listdir(source_folder):
 
                 if tex_type == "Base Color":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Base Color'])
+                    
                 elif tex_type == "Normal":
                     normal_map = nodes.new('ShaderNodeNormalMap')
                     normal_map.location = -200, 200
@@ -68,12 +70,15 @@ for folder_name in os.listdir(source_folder):
                     normal_map.inputs['Strength'].default_value = normal_strength
 
                     material.node_tree.links.new(normal_map.outputs['Normal'], shader.inputs['Normal'])
+                    
                 elif tex_type == "Roughness":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Roughness'])
                     tex_image.image.colorspace_settings.name = 'Non-Color'  # Load Roughness map as non-color
+                    
                 elif tex_type == "Metallic":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Metallic'])
                     tex_image.image.colorspace_settings.name = 'Non-Color'  # Load Metallic map as non-color
+                    
                 elif tex_type == "Height":
                     tex_image.image.colorspace_settings.name = 'Non-Color'  # Load height map as non-color
                     displacement = nodes.new('ShaderNodeDisplacement')
@@ -91,6 +96,7 @@ for folder_name in os.listdir(source_folder):
         # Apply subdivision modifiers to the plane
         set_adaptive_subsurf(plane)
 
+        # Add new camera
         bpy.ops.object.camera_add(location=(0, 0, 1))
         camera = bpy.context.object
         camera.data.type = 'ORTHO'
@@ -108,6 +114,7 @@ for folder_name in os.listdir(source_folder):
         fill_light.energy = 5  # Very weak energy for ambient fill light
         fill_light.size = 20  # Large size to cover the entire plane
 
+        # Add sun and randomize
         sun_distance = random.uniform(2, 5)  
         sun_theta = random.uniform(0, 90) * (np.pi / 180)
         sun_phi = random.uniform(0, 360) * (np.pi / 180)
@@ -128,17 +135,13 @@ for folder_name in os.listdir(source_folder):
         bpy.context.scene.render.engine = 'CYCLES'
         bpy.context.scene.cycles.progressive = 'EXPERIMENTAL'  # Set renderer to experimental
 
+        # Enable OptiX
+        bpy.context.scene.view_layers[0].cycles.use_denoising = True
+        bpy.context.scene.view_layers[0].cycles.denoising_type = 'OPTIX'
         prefs = bpy.context.preferences
         cprefs = prefs.addons['cycles'].preferences
         cprefs.get_devices()
         cprefs.compute_device_type = 'OPTIX'
-
-        # Enable denoising and set to OptiX
-        bpy.context.scene.view_layers[0].cycles.use_denoising = True
-        bpy.context.scene.view_layers[0].cycles.denoising_type = 'OPTIX'
-
-        # Disable Transparent Shadows
-        bpy.context.scene.render.film_transparent = False
 
         for device in cprefs.devices:
             device.use = True
