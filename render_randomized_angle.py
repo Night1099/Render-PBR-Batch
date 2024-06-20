@@ -7,17 +7,18 @@ import mathutils
 
 source_folder = sys.argv[5]
 
-
 def set_adaptive_subsurf(obj):
-    subsurf = obj.modifiers.new("Subdivision", 'SUBSURF')
-    subsurf.subdivision_type = 'SIMPLE'
-    subsurf.levels = 2 
-    subsurf.render_levels = 2
+    # First subdivision modifier
+    subsurf1 = obj.modifiers.new(name="Subdivision1", type='SUBSURF')
+    subsurf1.subdivision_type = 'SIMPLE'
+    subsurf1.levels = 6
+    subsurf1.render_levels = 6
 
-    # Other settings to mess with
-    # subsurf.max_level = 4 
-    # subsurf.quality = 3
-    # subsurf.boundary_smooth = 'PRESERVE_CORNERS'
+    # Second subdivision modifier
+    subsurf2 = obj.modifiers.new(name="Subdivision2", type='SUBSURF')
+    subsurf2.subdivision_type = 'SIMPLE'
+    subsurf2.levels = 4
+    subsurf2.render_levels = 4
 
 for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
@@ -86,8 +87,8 @@ for folder_name in os.listdir(source_folder):
         bpy.ops.mesh.primitive_plane_add(size=2, location=(0, 0, 0))
         plane = bpy.context.object
         plane.data.materials.append(material)
-        plane.modifiers.new("Subdivision", 'SUBSURF')
 
+        # Apply subdivision modifiers to the plane
         set_adaptive_subsurf(plane)
 
         bpy.ops.object.camera_add(location=(0, 0, 1))
