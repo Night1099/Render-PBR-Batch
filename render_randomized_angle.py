@@ -8,11 +8,19 @@ import mathutils
 source_folder = sys.argv[5]
 
 
-def set_adaptive_subsurf(obj):
+def set_adaptive_subsurf1(obj):
     subsurf = obj.modifiers.new("Subdivision", 'SUBSURF')
     subsurf.subdivision_type = 'SIMPLE'
-    subsurf.levels = 2 
-    subsurf.render_levels = 2
+    subsurf.levels = 6
+    subsurf.render_levels = 6
+
+
+def set_adaptive_subsurf2(obj):
+    subsurf = obj.modifiers.new("Subdivision", 'SUBSURF')
+    subsurf.subdivision_type = 'SIMPLE'
+    subsurf.levels = 4
+    subsurf.render_levels = 4
+
 
     # Other settings to mess with
     # subsurf.max_level = 4 
@@ -86,7 +94,11 @@ for folder_name in os.listdir(source_folder):
         plane.data.materials.append(material)
         plane.modifiers.new("Subdivision", 'SUBSURF')
 
-        set_adaptive_subsurf(plane)
+        set_adaptive_subsurf1(plane)
+        bpy.ops.object.modifier_apply(modifier="Subdivision")
+
+        set_adaptive_subsurf2(plane)
+
 
         bpy.ops.object.camera_add(location=(0, 0, 1))
         camera = bpy.context.object
@@ -140,8 +152,8 @@ for folder_name in os.listdir(source_folder):
         for device in cprefs.devices:
             device.use = True
 
-        bpy.context.scene.render.resolution_x = 512
-        bpy.context.scene.render.resolution_y = 512
+        bpy.context.scene.render.resolution_x = 2048
+        bpy.context.scene.render.resolution_y = 2048
         render_path = os.path.join(folder_path, f"{folder_name}_render_random.png")
         bpy.context.scene.render.filepath = render_path
 
