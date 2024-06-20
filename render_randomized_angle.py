@@ -116,8 +116,10 @@ for folder_name in os.listdir(source_folder):
         fill_light.size = 20 
 
         # Add sun and randomize
+        min_sun_z = 0.1
         sun_distance = random.uniform(2, 5)  
-        sun_theta = random.uniform(0, 90) * (np.pi / 180)
+        max_theta = np.arccos(min_sun_z / sun_distance)
+        sun_theta = random.uniform(0, max_theta) 
         sun_phi = random.uniform(0, 360) * (np.pi / 180)
 
         sun_x = sun_distance * np.sin(sun_theta) * np.cos(sun_phi)
