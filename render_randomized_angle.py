@@ -82,7 +82,7 @@ for folder_name in os.listdir(source_folder):
                 elif tex_type == "Height":
                     tex_image.image.colorspace_settings.name = 'Non-Color'
                     displacement = nodes.new('ShaderNodeDisplacement')
-                    dispalcement.method = 'BOTH'
+                    material.displacement_method = 'BOTH'
                     displacement.inputs['Midlevel'].default_value = 0.0 
                     displacement.inputs['Scale'].default_value = 0.05
                     displacement.location = -200, -200
@@ -136,12 +136,12 @@ for folder_name in os.listdir(source_folder):
         bpy.context.scene.cycles.progressive = 'EXPERIMENTAL'
 
         # Enable OptiX
-        bpy.context.scene.view_layers[0].cycles.use_denoising = True
-        bpy.context.scene.view_layers[0].cycles.denoising_type = 'OPTIX'
         prefs = bpy.context.preferences
         cprefs = prefs.addons['cycles'].preferences
         cprefs.get_devices()
         cprefs.compute_device_type = 'OPTIX'
+        bpy.context.scene.cycles.use_denoising = True
+        bpy.context.scene.cycles.denoiser = 'OPTIX'
 
         for device in cprefs.devices:
             device.use = True
