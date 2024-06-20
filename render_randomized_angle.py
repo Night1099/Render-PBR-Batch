@@ -64,6 +64,7 @@ for folder_name in os.listdir(source_folder):
                     normal_map = nodes.new('ShaderNodeNormalMap')
                     normal_map.location = -200, 200
                     material.node_tree.links.new(tex_image.outputs['Color'], normal_map.inputs['Color'])
+                    tex_image.image.colorspace_settings.name = 'Non-Color'
 
                     # Control the strength of the normal map
                     normal_strength = 1
