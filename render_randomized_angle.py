@@ -69,8 +69,10 @@ for folder_name in os.listdir(source_folder):
                     material.node_tree.links.new(normal_map.outputs['Normal'], shader.inputs['Normal'])
                 elif tex_type == "Roughness":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Roughness'])
+                    tex_image.image.colorspace_settings.name = 'Non-Color'  # Load Roughness map as non-color
                 elif tex_type == "Metallic":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Metallic'])
+                    tex_image.image.colorspace_settings.name = 'Non-Color'  # Load Metallic map as non-color
                 elif tex_type == "Height":
                     tex_image.image.colorspace_settings.name = 'Non-Color'  # Load height map as non-color
                     displacement = nodes.new('ShaderNodeDisplacement')
