@@ -3,6 +3,7 @@ import sys
 import os
 import random
 import numpy as np
+import mathutils
 
 source_folder = sys.argv[5]
 
@@ -104,17 +105,21 @@ for folder_name in os.listdir(source_folder):
         fill_light.energy = 5  # Very weak energy for ambient fill light
         fill_light.size = 20  # Large size to cover the entire plane
 
-        # Add a new sun light pointed at the center of the plane
-        sun_distance = random.uniform(2, 5)  # Randomize the distance of the sun from the plane
-        sun_theta = random.uniform(0, 130) * (np.pi / 180)  # Convert degrees to radians
+        sun_distance = random.uniform(2, 5)  
+        sun_theta = random.uniform(0, 90) * (np.pi / 180)
         sun_phi = random.uniform(0, 360) * (np.pi / 180)
+
         sun_x = sun_distance * np.sin(sun_theta) * np.cos(sun_phi)
         sun_y = sun_distance * np.sin(sun_theta) * np.sin(sun_phi)
         sun_z = sun_distance * np.cos(sun_theta)
+
         bpy.ops.object.light_add(type='SUN', location=(sun_x, sun_y, sun_z))
         sun_light = bpy.context.object.data
-        sun_light.energy = 2  # Set the energy of the sun light
-        bpy.context.object.rotation_euler = (np.pi / 2, 0, 0)  # Point the sun towards the center of the plane
+        sun_light.energy = 2 
+
+        direction = mathutils.Vector((-sun_x, -sun_y, -sun_z))
+        rot_quat = direction.to_track_quat('-Z', 'Y')
+        bpy.context.object.rotation_euler = rot_quat.to_euler()
 
         bpy.context.scene.cycles.device = 'GPU'
         bpy.context.scene.render.engine = 'CYCLES'
@@ -135,8 +140,8 @@ for folder_name in os.listdir(source_folder):
         for device in cprefs.devices:
             device.use = True
 
-        bpy.context.scene.render.resolution_x = 2048
-        bpy.context.scene.render.resolution_y = 2048
+        bpy.context.scene.render.resolution_x = 512
+        bpy.context.scene.render.resolution_y = 512
         render_path = os.path.join(folder_path, f"{folder_name}_render_random.png")
         bpy.context.scene.render.filepath = render_path
 
