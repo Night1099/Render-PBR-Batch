@@ -82,6 +82,7 @@ for folder_name in os.listdir(source_folder):
                 elif tex_type == "Height":
                     tex_image.image.colorspace_settings.name = 'Non-Color'
                     displacement = nodes.new('ShaderNodeDisplacement')
+                    displacement.inputs['Displacement'].default_value = 'BOTH'  
                     displacement.inputs['Midlevel'].default_value = 0.0 
                     displacement.inputs['Scale'].default_value = 0.05
                     displacement.location = -200, -200
