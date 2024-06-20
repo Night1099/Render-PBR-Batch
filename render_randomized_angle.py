@@ -66,25 +66,24 @@ for folder_name in os.listdir(source_folder):
                     material.node_tree.links.new(tex_image.outputs['Color'], normal_map.inputs['Color'])
 
                     # Control the strength of the normal map
-                    normal_strength = 0.5  # Set your desired strength here
+                    normal_strength = 1
                     normal_map.inputs['Strength'].default_value = normal_strength
 
                     material.node_tree.links.new(normal_map.outputs['Normal'], shader.inputs['Normal'])
                     
                 elif tex_type == "Roughness":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Roughness'])
-                    tex_image.image.colorspace_settings.name = 'Non-Color'  # Load Roughness map as non-color
+                    tex_image.image.colorspace_settings.name = 'Non-Color'
                     
                 elif tex_type == "Metallic":
                     material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Metallic'])
-                    tex_image.image.colorspace_settings.name = 'Non-Color'  # Load Metallic map as non-color
+                    tex_image.image.colorspace_settings.name = 'Non-Color'
                     
                 elif tex_type == "Height":
-                    tex_image.image.colorspace_settings.name = 'Non-Color'  # Load height map as non-color
+                    tex_image.image.colorspace_settings.name = 'Non-Color'
                     displacement = nodes.new('ShaderNodeDisplacement')
-                    displacement.inputs['Height'].default_value = 1.0  # Set to 'Displacement and Bump'
-                    displacement.inputs['Midlevel'].default_value = 0.0  # Set midlevel to 0
-                    displacement.inputs['Scale'].default_value = 0.05  # Set scale to 0.05
+                    displacement.inputs['Midlevel'].default_value = 0.0 
+                    displacement.inputs['Scale'].default_value = 0.05
                     displacement.location = -200, -200
                     material.node_tree.links.new(tex_image.outputs['Color'], displacement.inputs['Height'])
                     material.node_tree.links.new(displacement.outputs['Displacement'], output.inputs['Displacement'])
@@ -112,7 +111,7 @@ for folder_name in os.listdir(source_folder):
         bpy.ops.object.light_add(type='AREA', radius=5, location=(0, 0, 5))
         fill_light = bpy.context.object.data
         fill_light.energy = 5  # Very weak energy for ambient fill light
-        fill_light.size = 20  # Large size to cover the entire plane
+        fill_light.size = 20 
 
         # Add sun and randomize
         sun_distance = random.uniform(2, 5)  
@@ -133,7 +132,7 @@ for folder_name in os.listdir(source_folder):
 
         bpy.context.scene.cycles.device = 'GPU'
         bpy.context.scene.render.engine = 'CYCLES'
-        bpy.context.scene.cycles.progressive = 'EXPERIMENTAL'  # Set renderer to experimental
+        bpy.context.scene.cycles.progressive = 'EXPERIMENTAL'
 
         # Enable OptiX
         bpy.context.scene.view_layers[0].cycles.use_denoising = True
