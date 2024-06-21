@@ -32,30 +32,11 @@ def initialize_scene():
     camera.data.ortho_scale = 2.0
     bpy.context.scene.camera = camera
 
-    # Initialize fill light (area light)
+    # Initialize light
     bpy.ops.object.light_add(type='AREA', radius=5, location=(0, 0, 5))
     fill_light = bpy.context.object.data
-    fill_light.energy = 5  # Very weak energy for ambient fill light
+    fill_light.energy = 1000
     fill_light.size = 20 
-
-    # Add randomized sun light
-    min_sun_z = 3
-    sun_distance = random.uniform(3, 5)  
-    max_theta = np.arccos(min_sun_z / sun_distance)
-    sun_theta = random.uniform(0, max_theta) 
-    sun_phi = random.uniform(0, 360) * (np.pi / 180)
-
-    sun_x = sun_distance * np.sin(sun_theta) * np.cos(sun_phi)
-    sun_y = sun_distance * np.sin(sun_theta) * np.sin(sun_phi)
-    sun_z = sun_distance * np.cos(sun_theta)
-
-    bpy.ops.object.light_add(type='SUN', location=(sun_x, sun_y, sun_z))
-    sun_light = bpy.context.object.data
-    sun_light.energy = 2 
-
-    direction = mathutils.Vector((-sun_x, -sun_y, -sun_z))
-    rot_quat = direction.to_track_quat('-Z', 'Y')
-    bpy.context.object.rotation_euler = rot_quat.to_euler()
 
     # Create plane
     bpy.ops.mesh.primitive_plane_add(size=2, location=(0, 0, 0))
@@ -76,12 +57,7 @@ def initialize_scene():
     bpy.context.scene.render.resolution_x = 2048
     bpy.context.scene.render.resolution_y = 2048
 
-    # Set render engine to Cycles
-    bpy.context.scene.render.engine = 'CYCLES'
-    bpy.context.scene.cycles.device = 'GPU'
-    bpy.context.scene.cycles.progressive = 'EXPERIMENTAL'
-
-    return plane, camera, sun_light, fill_light
+    return plane, camera, bpy.context.object, fill_light
 
 def create_material(folder_name, folder_path):
     material = bpy.data.materials.new(name=f"PBR_Material_{folder_name}")
@@ -150,7 +126,7 @@ def create_material(folder_name, folder_path):
     return material
 
 # Initialize scene and get the plane object
-plane, camera, sun_light, fill_light = initialize_scene()
+plane, camera, light, fill_light = initialize_scene()
 
 for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
@@ -165,7 +141,7 @@ for folder_name in os.listdir(source_folder):
             plane.data.materials.append(material)
 
         # Set render path and render
-        render_path = os.path.join(folder_path, f"{folder_name}_render_fixed_angle_v2.png")
+        render_path = os.path.join(folder_path, f"{folder_name}_render_fixed_angle.png")
         bpy.context.scene.render.filepath = render_path
 
         bpy.ops.render.render(write_still=True)
