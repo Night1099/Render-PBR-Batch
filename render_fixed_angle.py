@@ -1,9 +1,7 @@
 import bpy
 import sys
 import os
-import random
-import numpy as np
-import mathutils
+import gc
 
 source_folder = sys.argv[5]
 
@@ -81,13 +79,17 @@ def create_material(folder_name, folder_path):
         "Height": "_height.png"
     }
 
+    loaded_images = []
+
     for tex_type, suffix in texture_types.items():
         filename = folder_name + suffix
         image_path = os.path.join(folder_path, filename)
         
         if os.path.exists(image_path):
             tex_image = nodes.new('ShaderNodeTexImage')
-            tex_image.image = bpy.data.images.load(image_path)
+            image = bpy.data.images.load(image_path)
+            tex_image.image = image
+            loaded_images.append(image)
             tex_image.location = -400, 200 * list(texture_types.keys()).index(tex_type)
 
             if tex_type == "Base Color":
@@ -99,7 +101,6 @@ def create_material(folder_name, folder_path):
                 material.node_tree.links.new(tex_image.outputs['Color'], normal_map.inputs['Color'])
                 tex_image.image.colorspace_settings.name = 'Non-Color'
 
-                # Control the strength of the normal map
                 normal_strength = 0.75
                 normal_map.inputs['Strength'].default_value = normal_strength
 
@@ -123,7 +124,7 @@ def create_material(folder_name, folder_path):
                 material.node_tree.links.new(tex_image.outputs['Color'], displacement.inputs['Height'])
                 material.node_tree.links.new(displacement.outputs['Displacement'], output.inputs['Displacement'])
 
-    return material
+    return material, loaded_images
 
 # Initialize scene and get the plane object
 plane, camera, light, fill_light = initialize_scene()
@@ -132,7 +133,7 @@ for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
     if os.path.isdir(folder_path):
         # Create material for this texture set
-        material = create_material(folder_name, folder_path)
+        material, loaded_images = create_material(folder_name, folder_path)
 
         # Assign material to the plane
         if plane.data.materials:
@@ -149,6 +150,16 @@ for folder_name in os.listdir(source_folder):
 
         # Clean up: remove the material after rendering
         bpy.data.materials.remove(material)
+        
+        # Remove loaded images
+        for image in loaded_images:
+            bpy.data.images.remove(image)
+
+        # Force garbage collection
+        gc.collect()
 
 # Clean up: remove the plane after all renders are complete
 bpy.data.objects.remove(plane, do_unlink=True)
+
+# Final garbage collection
+gc.collect()
