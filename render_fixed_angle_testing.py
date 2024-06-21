@@ -21,6 +21,10 @@ def set_adaptive_subsurf(obj):
     subsurf2.render_levels = 4
 
 def initialize_scene():
+    # Remove all existing objects
+    bpy.ops.object.select_all(action='SELECT')
+    bpy.ops.object.delete()
+
     # Initialize camera
     bpy.ops.object.camera_add(location=(0, 0, 1))
     camera = bpy.context.object
@@ -31,14 +35,8 @@ def initialize_scene():
     # Initialize light
     bpy.ops.object.light_add(type='AREA', radius=5, location=(0, 0, 5))
     fill_light = bpy.context.object.data
-    fill_light.energy = 1000 
+    fill_light.energy = 1000
     fill_light.size = 20 
-
-    # Remove default cube and any existing lights (including sun)
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.ops.object.select_by_type(type='MESH')
-    bpy.ops.object.select_by_type(type='LIGHT')
-    bpy.ops.object.delete()
 
     # Create plane
     bpy.ops.mesh.primitive_plane_add(size=2, location=(0, 0, 0))
