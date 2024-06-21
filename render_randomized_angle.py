@@ -20,6 +20,18 @@ def set_adaptive_subsurf(obj):
     subsurf2.levels = 4
     subsurf2.render_levels = 4
 
+# Initialize camera once, outside the main loop
+def initialize_camera():
+    bpy.ops.object.camera_add(location=(0, 0, 1))
+    camera = bpy.context.object
+    camera.data.type = 'ORTHO'
+    camera.data.ortho_scale = 2.0
+    bpy.context.scene.camera = camera
+    return camera
+
+# Initialize camera
+main_camera = initialize_camera()
+
 for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
     if os.path.isdir(folder_path):
@@ -96,13 +108,6 @@ for folder_name in os.listdir(source_folder):
 
         # Apply subdivision modifiers to the plane
         set_adaptive_subsurf(plane)
-
-        # Add new camera
-        bpy.ops.object.camera_add(location=(0, 0, 1))
-        camera = bpy.context.object
-        camera.data.type = 'ORTHO'
-        camera.data.ortho_scale = 2.0
-        bpy.context.scene.camera = camera
 
         # Remove the default sun light
         bpy.ops.object.select_all(action='DESELECT')
