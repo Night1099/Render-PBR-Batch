@@ -3,7 +3,7 @@
 The goal of these scripts is to render paired albedo and diffuse textures for training AI models.
 
 Use this command to run the scripts:
-`blender.exe --background --python 'path\to\script.py' -- 'path\to\source\folder'`
+```blender.exe --background --python 'path\to\script.py' -- 'path\to\source\folder'```
 
 The scripts expect the following folder structure:
 ```
