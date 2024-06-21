@@ -20,7 +20,6 @@ def set_adaptive_subsurf(obj):
     subsurf2.levels = 4
     subsurf2.render_levels = 4
 
-# Initialize camera once, outside the main loop
 def initialize_camera():
     bpy.ops.object.camera_add(location=(0, 0, 1))
     camera = bpy.context.object
@@ -29,8 +28,23 @@ def initialize_camera():
     bpy.context.scene.camera = camera
     return camera
 
-# Initialize camera
+def initialize_light():
+    bpy.ops.object.light_add(type='AREA', radius=5, location=(0, 0, 5))
+    fill_light = bpy.context.object.data
+    fill_light.energy = 1000  # Very weak energy for ambient fill light
+    fill_light.size = 20 
+    return bpy.context.object
+
+# Initialize camera and light
 main_camera = initialize_camera()
+main_light = initialize_light()
+
+# Remove default light
+bpy.ops.object.select_all(action='DESELECT')
+bpy.ops.object.select_by_type(type='LIGHT')
+for obj in bpy.context.selected_objects:
+    if obj != main_light:
+        bpy.data.objects.remove(obj, do_unlink=True)
 
 for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
@@ -108,17 +122,6 @@ for folder_name in os.listdir(source_folder):
 
         # Apply subdivision modifiers to the plane
         set_adaptive_subsurf(plane)
-
-        # Remove the default sun light if it exists
-        bpy.ops.object.select_all(action='DESELECT')
-        bpy.ops.object.select_by_type(type='LIGHT')
-        bpy.ops.object.delete()
-
-        # Add a new area light as an ambient fill light
-        bpy.ops.object.light_add(type='AREA', radius=5, location=(0, 0, 5))
-        fill_light = bpy.context.object.data
-        fill_light.energy = 1000  # Very weak energy for ambient fill light
-        fill_light.size = 20 
 
         # Enable OptiX
         prefs = bpy.context.preferences
