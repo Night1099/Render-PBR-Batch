@@ -59,7 +59,7 @@ def initialize_scene():
     bpy.context.scene.render.resolution_x = 2048
     bpy.context.scene.render.resolution_y = 2048
 
-    return plane, camera, bpy.context.object
+    return plane, camera, bpy.context.object, fill_light
 
 def create_material(folder_name, folder_path):
     material = bpy.data.materials.new(name=f"PBR_Material_{folder_name}")
@@ -128,7 +128,7 @@ def create_material(folder_name, folder_path):
     return material
 
 # Initialize scene and get the plane object
-plane, camera, light = initialize_scene()
+plane, camera, light, fill_light = initialize_scene()
 
 for folder_name in os.listdir(source_folder):
     folder_path = os.path.join(source_folder, folder_name)
