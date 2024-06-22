@@ -81,8 +81,7 @@ def create_material(folder_name, folder_path):
 
     loaded_images = []
 
-    for tex_type, suffix in texture_types.items():
-        filename = folder_name + suffix
+    for tex_type, filename in texture_types.items():
         image_path = os.path.join(folder_path, filename)
         
         if os.path.exists(image_path):
