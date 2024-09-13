@@ -121,13 +121,15 @@ def create_material(folder_name, folder_path):
 
             if tex_type == "Base Color":
                 material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Base Color'])
+                tex_image.interpolation = 'Cubic'
                 
             elif tex_type == "Normal":
                 normal_map = nodes.new('ShaderNodeNormalMap')
                 normal_map.location = -200, 200
                 material.node_tree.links.new(tex_image.outputs['Color'], normal_map.inputs['Color'])
                 tex_image.image.colorspace_settings.name = 'Non-Color'
-
+                tex_image.interpolation = 'Cubic'
+                
                 # Control the strength of the normal map
                 normal_strength = 0.75
                 normal_map.inputs['Strength'].default_value = normal_strength
@@ -137,10 +139,12 @@ def create_material(folder_name, folder_path):
             elif tex_type == "Roughness":
                 material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Roughness'])
                 tex_image.image.colorspace_settings.name = 'Non-Color'
+                tex_image.interpolation = 'Cubic'
                 
             elif tex_type == "Metallic":
                 material.node_tree.links.new(tex_image.outputs['Color'], shader.inputs['Metallic'])
                 tex_image.image.colorspace_settings.name = 'Non-Color'
+                tex_image.interpolation = 'Cubic'
                 
             elif tex_type == "Height":
                 tex_image.image.colorspace_settings.name = 'Non-Color'
@@ -151,6 +155,8 @@ def create_material(folder_name, folder_path):
                 displacement.location = -200, -200
                 material.node_tree.links.new(tex_image.outputs['Color'], displacement.inputs['Height'])
                 material.node_tree.links.new(displacement.outputs['Displacement'], output.inputs['Displacement'])
+                tex_image.interpolation = 'Cubic'
+
 
     return material, loaded_images
 
