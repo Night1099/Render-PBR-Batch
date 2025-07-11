@@ -1,3 +1,7 @@
+This has been superseded ands I reccomend using this project with CookToleranceBRDF method https://github.com/giuvecchio/PyPBR
+
+
+
 ## Blender Diffuse-Albedo Renderer
 
 The goal of these scripts is to render paired albedo and diffuse textures for training AI models.
