@@ -1,4 +1,4 @@
-This has been superseded ands I reccomend using this project with CookToleranceBRDF method https://github.com/giuvecchio/PyPBR
+This has been superseded and I reccomend using this project with CookToleranceBRDF method https://github.com/giuvecchio/PyPBR
 
 
 
